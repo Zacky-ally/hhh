@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Song</title>
+    <style>
+        body {
+            background: #1e1e2f;
+            color: #00ff9f;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            position: absolute;
+        }
+
+        button {
+            background-color: #00ff9f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 20px;
+            z-index: 11;
+            box-shadow: 0 5px 15px rgba(0, 255, 159, 0.5);
+        }
+
+        button:hover {
+            background-color: #14e897;
+        }
+
+        h1 {
+            animation: glow 1.5s infinite alternate;
+            z-index: 10;
+            position: relative;
+            align-content: center;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #00ff9f, 0 0 20px #00ff9f;
+            }
+
+            to {
+                text-shadow: 0 0 20px #00ff9f, 0 0 40px #00ff9f;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎉 Happy Birthday,saiful! 🎂</h1>
+    <button onclick="playHappyBirthday()">Play Song 🎵</button>
+    <canvas></canvas>
+    <script>
+        function playHappyBirthday() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Notes for "Happy Birthday"
+            const notes = [
+                { frequency: 264, duration: 400 }, // Ha
+                { frequency: 264, duration: 400 }, // ppy
+                { frequency: 297, duration: 800 }, // Birth-
+                { frequency: 264, duration: 800 }, // day
+                { frequency: 352, duration: 800 }, // to
+                { frequency: 330, duration: 1600 }, // you
+                { frequency: 264, duration: 400 }, // Ha
+                { frequency: 264, duration: 400 }, // ppy
+                { frequency: 297, duration: 800 }, // Birth-
+                { frequency: 264, duration: 800 }, // day
+                { frequency: 396, duration: 800 }, // dear
+                { frequency: 352, duration: 1600 }, // [Nama]
+                { frequency: 264, duration: 400 }, // Ha
+                { frequency: 264, duration: 400 }, // ppy
+                { frequency: 440, duration: 800 }, // Birth-
+                { frequency: 352, duration: 800 }, // day
+                { frequency: 352, duration: 800 }, // to
+                { frequency: 330, duration: 1600 }, // you
+            ];
+
+            // Play each note
+            let startTime = audioCtx.currentTime;
+            notes.forEach((note) => {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.type = "sine";
+                oscillator.frequency.setValueAtTime(note.frequency, startTime);
+                gainNode.gain.setValueAtTime(0.5, startTime);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.start(startTime);
+                oscillator.stop(startTime + note.duration / 1000);
+
+                startTime += note.duration / 1000;
+            });
+        }
+        const canvas = document.querySelector("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor(x, y, color, velocity, size) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = velocity;
+                this.size = size;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            update() {
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.size *= 0.98; // Shrink effect
+            }
+        }
+
+        let particles = [];
+        const colors = ["#ff6b6b", "#ffe66d", "#6bffb3", "#6b85ff", "#ff6bef"];
+
+        function spawnParticles() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            for (let i = 0; i < 8; i++) {
+                particles.push(
+                    new Particle(
+                        x,
+                        y,
+                        colors[Math.floor(Math.random() * colors.length)],
+                        {
+                            x: (Math.random() - 0.5) * 4,
+                            y: (Math.random() - 0.5) * 4,
+                        },
+                        Math.random() * 5 + 2
+                    )
+                );
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = "rgba(30, 30, 47, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((particle, index) => {
+                if (particle.size < 0.5) {
+                    particles.splice(index, 1);
+                } else {
+                    particle.update();
+                    particle.draw();
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        setInterval(spawnParticles, 300);
+        animate();
+
+        const notes = [
+            { frequency: 264, duration: 400 }, // Ha
+            { frequency: 264, duration: 400 }, // ppy
+            { frequency: 297, duration: 800 }, // Birth-
+            { frequency: 264, duration: 800 }, // day
+            { frequency: 352, duration: 800 }, // to
+            { frequency: 330, duration: 1600 }, // you
+            { frequency: 264, duration: 400 }, // Ha
+            { frequency: 264, duration: 400 }, // ppy
+            { frequency: 297, duration: 800 }, // Birth-
+            { frequency: 264, duration: 800 }, // day
+            { frequency: 396, duration: 800 }, // dear
+            { frequency: 352, duration: 1600 }, // [Nama]
+            { frequency: 264, duration: 400 }, // Ha
+            { frequency: 264, duration: 400 }, // ppy
+            { frequency: 440, duration: 800 }, // Birth-
+            { frequency: 352, duration: 800 }, // day
+            { frequency: 352, duration: 800 }, // to
+            { frequency: 330, duration: 1600 }, // you
+        ];
+
+        // Play each note
+        let startTime = audioCtx.currentTime;
+        notes.forEach((note) => {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(note.frequency, startTime);
+            gainNode.gain.setValueAtTime(0.5, startTime);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start(startTime);
+            oscillator.stop(startTime + note.duration / 1000);
+
+            startTime += note.duration / 1000;
+        });
+
+    </script>
+</body>
+
+</html>
